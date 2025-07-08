@@ -56,6 +56,14 @@ class _BookingState extends State<Booking> {
               ),
 
               SizedBox(height: 20.0),
+              Text(
+                widget.service,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.w300,
+                ),
+              ),
             ],
           ),
         ),
