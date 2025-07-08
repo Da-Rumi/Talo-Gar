@@ -206,6 +206,50 @@ class _BookingState extends State<Booking> {
                   ],
                 ),
               ),
+              SizedBox(height: 20.0),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => Scaffold(
+                            backgroundColor: const Color.fromARGB(
+                              255,
+                              24,
+                              90,
+                              232,
+                            ),
+                            body: Center(
+                              child: Text(
+                                "Your appointment is booked for ${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year} at ${_selectedTime.format(context)}",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 0, 0, 0),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
+                ),
+                child: Text(
+                  "Get a stylish Haircut",
+                  style: TextStyle(
+                    fontSize: 30.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
             ],
           ),
         ),
