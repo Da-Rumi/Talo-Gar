@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:talo_gar/pages/signup.dart'; // Import for navigating to signup page
+import 'package:talo_gar/pages/login.dart'; // Import for navigating back to login
 
-class LogIn extends StatefulWidget {
-  const LogIn({super.key});
+class SignUp extends StatefulWidget {
+  const SignUp({super.key});
 
   @override
-  State<LogIn> createState() => _LoginState();
+  State<SignUp> createState() => _SignUpState();
 }
 
-class _LoginState extends State<LogIn> {
+class _SignUpState extends State<SignUp> {
   // TextEditingControllers for input fields
+  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   @override
   void dispose() {
+    _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -37,7 +39,7 @@ class _LoginState extends State<LogIn> {
         ),
         child: Stack(
           children: [
-            // "Hello Sign in!" text at the top
+            // "Create your Account" text at the top
             Positioned(
               top: 60.0,
               left: 20.0,
@@ -45,7 +47,7 @@ class _LoginState extends State<LogIn> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: const [
                   Text(
-                    "Hello",
+                    "Create your",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 40.0,
@@ -53,7 +55,7 @@ class _LoginState extends State<LogIn> {
                     ),
                   ),
                   Text(
-                    "Sign in!",
+                    "Account",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 35.0,
@@ -63,7 +65,7 @@ class _LoginState extends State<LogIn> {
                 ],
               ),
             ),
-            // White login card at the bottom
+            // White signup card at the bottom
             Positioned(
               bottom: 0,
               left: 0,
@@ -71,7 +73,7 @@ class _LoginState extends State<LogIn> {
               child: Container(
                 height:
                     MediaQuery.of(context).size.height *
-                    0.65, // Adjust height as needed
+                    0.70, // Slightly more height for an extra field
                 decoration: const BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
@@ -83,10 +85,47 @@ class _LoginState extends State<LogIn> {
                   padding: const EdgeInsets.symmetric(
                     horizontal: 30.0,
                     vertical: 40.0,
-                  ),
+                  ).copyWith(bottom: 20.0), // Added bottom padding
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // Name Input Field
+                      const Text(
+                        "Name",
+                        style: TextStyle(
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.bold,
+                          color: Color.fromARGB(
+                            255,
+                            50,
+                            50,
+                            50,
+                          ), // Dark grey for label
+                        ),
+                      ),
+                      const SizedBox(height: 10.0),
+                      TextField(
+                        controller: _nameController,
+                        keyboardType: TextInputType.name,
+                        decoration: InputDecoration(
+                          prefixIcon: const Icon(
+                            Icons.person_outline,
+                            color: Colors.grey,
+                          ),
+                          hintText: "Your Name",
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey.shade300),
+                          ),
+                          focusedBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color.fromARGB(255, 24, 90, 232),
+                            ), // App blue for focus
+                          ),
+                        ),
+                        // TODO: Add validation for name input
+                      ),
+                      const SizedBox(height: 30.0),
+
                       // Gmail Input Field
                       const Text(
                         "Gmail",
@@ -162,15 +201,15 @@ class _LoginState extends State<LogIn> {
                       ),
                       const SizedBox(height: 15.0),
 
-                      // Forgot Password
+                      // Forgot Password (Optional for Sign Up, but keeping structure)
                       Align(
                         alignment: Alignment.centerRight,
                         child: TextButton(
                           onPressed: () {
-                            // TODO: Implement forgot password functionality
+                            // TODO: Implement forgot password functionality or remove if not needed for sign up
                           },
                           child: const Text(
-                            "Forgot Password?",
+                            "Forgot Password?", // Could be removed for sign up, or changed to a different relevant link
                             style: TextStyle(
                               color: Color.fromARGB(
                                 255,
@@ -185,7 +224,7 @@ class _LoginState extends State<LogIn> {
                       ),
                       const SizedBox(height: 40.0),
 
-                      // Sign In Button
+                      // Sign Up Button
                       Container(
                         width: double.infinity, // Occupy full width
                         height: 55.0,
@@ -198,13 +237,13 @@ class _LoginState extends State<LogIn> {
                                 125,
                                 150,
                                 210,
-                              ), // Darker red/purple for button
+                              ), // Light blue for button
                               Color.fromARGB(
                                 255,
                                 30,
                                 33,
                                 192,
-                              ), // Lighter red/purple for button
+                              ), // Darker blue for button
                             ],
                             begin: Alignment.centerLeft,
                             end: Alignment.centerRight,
@@ -212,8 +251,9 @@ class _LoginState extends State<LogIn> {
                         ),
                         child: ElevatedButton(
                           onPressed: () {
-                            // TODO: Implement Firebase Sign In logic here
-                            // Use _emailController.text and _passwordController.text for credentials
+                            // TODO: Implement Firebase Sign Up logic here
+                            // Use _nameController.text, _emailController.text, and _passwordController.text
+                            print("Name: ${_nameController.text}");
                             print("Email: ${_emailController.text}");
                             print("Password: ${_passwordController.text}");
                           },
@@ -228,7 +268,7 @@ class _LoginState extends State<LogIn> {
                             padding: EdgeInsets.zero, // Remove default padding
                           ),
                           child: const Text(
-                            "SIGN IN",
+                            "SIGN UP",
                             style: TextStyle(
                               fontSize: 20.0,
                               fontWeight: FontWeight.bold,
@@ -239,12 +279,12 @@ class _LoginState extends State<LogIn> {
                       ),
                       const SizedBox(height: 50.0),
 
-                      // Don't have account? Sign up
+                      // Already have an account? Sign in
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           const Text(
-                            "Don't have account?",
+                            "Already have an account?",
                             style: TextStyle(
                               color: Colors.grey,
                               fontSize: 16.0,
@@ -252,16 +292,16 @@ class _LoginState extends State<LogIn> {
                           ),
                           TextButton(
                             onPressed: () {
-                              // Navigate to Sign Up page
-                              Navigator.push(
+                              // Navigate back to Login page
+                              Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => SignUp(),
+                                  builder: (context) => LogIn(),
                                 ),
                               );
                             },
                             child: const Text(
-                              "Sign up",
+                              "Sign in",
                               style: TextStyle(
                                 color: Color.fromARGB(
                                   255,
