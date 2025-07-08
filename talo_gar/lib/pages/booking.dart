@@ -9,6 +9,34 @@ class Booking extends StatefulWidget {
 }
 
 class _BookingState extends State<Booking> {
+  DateTime _selectedDate = DateTime.now();
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate,
+      firstDate: DateTime(2025),
+      lastDate: DateTime(2026),
+    );
+
+    if (picked != null && picked != _selectedDate)
+      setState(() {
+        _selectedDate = picked;
+      });
+  }
+
+  TimeOfDay _selectedTime = TimeOfDay.now();
+  Future<void> _selectTime(BuildContext context) async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: _selectedTime,
+    );
+
+    if (picked != null && picked != _selectedTime)
+      setState(() {
+        _selectedTime = picked;
+      });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,8 +88,122 @@ class _BookingState extends State<Booking> {
                 widget.service,
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.w300,
+                  fontSize: 25.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 20.0),
+              Container(
+                padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(255, 64, 198, 255),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 10.0,
+                      offset: Offset(0, 5),
+                    ),
+                  ],
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+                width: MediaQuery.of(context).size.width,
+                child: Column(
+                  children: [
+                    Text(
+                      "Set a Date",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+
+                      children: [
+                        SizedBox(width: 10.0),
+                        IconButton(
+                          icon: Icon(Icons.calendar_today, color: Colors.black),
+                          onPressed: () {
+                            showDatePicker(
+                              context: context,
+                              initialDate: _selectedDate,
+                              firstDate: DateTime.now(),
+                              lastDate: DateTime(2101),
+                            ).then((pickedDate) {
+                              if (pickedDate != null &&
+                                  pickedDate != _selectedDate) {
+                                setState(() {
+                                  _selectedDate = pickedDate;
+                                });
+                              }
+                            });
+                          },
+                        ),
+                        SizedBox(width: 8.0),
+                        Text(
+                          "${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 20.0),
+              Container(
+                padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(255, 64, 198, 255),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 10.0,
+                      offset: Offset(0, 5),
+                    ),
+                  ],
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+                width: MediaQuery.of(context).size.width,
+                child: Column(
+                  children: [
+                    Text(
+                      "Set Time",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+
+                      children: [
+                        SizedBox(width: 5.0),
+                        IconButton(
+                          icon: Icon(Icons.alarm, color: Colors.black),
+                          onPressed: () {
+                            _selectTime(context);
+                          },
+                        ),
+                        SizedBox(width: 8.0), // Added SizedBox for spacing
+                        Text(
+                          _selectedTime.format(
+                            context,
+                          ), // Display selected time
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
             ],
