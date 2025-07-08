@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:talo_gar/pages/home.dart';
 
 class Onboarding extends StatefulWidget {
   const Onboarding({super.key});
@@ -20,7 +21,10 @@ class _OnboardingState extends State<Onboarding> {
             SizedBox(height: 50.0),
             ElevatedButton(
               onPressed: () {
-                // Add button functionality here
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Home()),
+                );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color.fromARGB(255, 48, 86, 101),

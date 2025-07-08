@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:talo_gar/pages/onboarding.dart';
 import 'package:talo_gar/pages/home.dart';
+import 'package:talo_gar/pages/booking.dart';
 
 void main() {
   runApp(const MyApp());
@@ -33,7 +34,7 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: Home(),
+      home: Booking(),
     );
   }
 }
