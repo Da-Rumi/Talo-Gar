@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:talo_gar/pages/login.dart'; // Import for navigating back to login
+import 'package:firebase_auth/firebase_auth.dart'; // Firebase Authentication
+import 'package:talo_gar/pages/home.dart'; // Import for navigating to home page
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -13,6 +15,49 @@ class _SignUpState extends State<SignUp> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  // Async function to handle user sign up
+  Future<void> _signUp() async {
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+            email: _emailController.text.trim(),
+            password: _passwordController.text,
+          );
+
+      // Update user display name
+      await userCredential.user?.updateDisplayName(_nameController.text.trim());
+
+      // Show success message
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Registration successful!')));
+
+      // Navigate to home page
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => Home()),
+      );
+    } on FirebaseAuthException catch (e) {
+      String message = 'An unknown error occurred.';
+      if (e.code == 'weak-password') {
+        message = 'The password provided is too weak.';
+      } else if (e.code == 'email-already-in-use') {
+        message = 'The account already exists for that email.';
+      } else if (e.code == 'invalid-email') {
+        message = 'The email address is not valid.';
+      }
+      // Show error message
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
+    } catch (e) {
+      // General error handling
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
+    }
+  }
 
   @override
   void dispose() {
@@ -250,13 +295,7 @@ class _SignUpState extends State<SignUp> {
                           ),
                         ),
                         child: ElevatedButton(
-                          onPressed: () {
-                            // TODO: Implement Firebase Sign Up logic here
-                            // Use _nameController.text, _emailController.text, and _passwordController.text
-                            print("Name: ${_nameController.text}");
-                            print("Email: ${_emailController.text}");
-                            print("Password: ${_passwordController.text}");
-                          },
+                          onPressed: _signUp, // Call the _signUp function
                           style: ElevatedButton.styleFrom(
                             backgroundColor:
                                 Colors
@@ -277,8 +316,7 @@ class _SignUpState extends State<SignUp> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 50.0),
-
+                      const SizedBox(height: 20.0), // Reduced from 50.0 to 20.0
                       // Already have an account? Sign in
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,

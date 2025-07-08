@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "973632240569",
+    "project_id": "talogar-79a95",
+    "storage_bucket": "talogar-79a95.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:973632240569:android:9adea481af1889af6f9468",
+        "android_client_info": {
+          "package_name": "com.example.talo_gar"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCUPeTQQyv8B_1jXya-M6y7vf3dEiuH8Yc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

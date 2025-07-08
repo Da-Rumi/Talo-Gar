@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:talo_gar/pages/signup.dart'; // Import for navigating to signup page
+import 'package:firebase_auth/firebase_auth.dart'; // Firebase Authentication
+import 'package:talo_gar/pages/home.dart'; // Import for navigating to home page
 
 class LogIn extends StatefulWidget {
   const LogIn({super.key});
@@ -12,6 +14,47 @@ class _LoginState extends State<LogIn> {
   // TextEditingControllers for input fields
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  // Async function to handle user sign in
+  Future<void> _signIn() async {
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+      );
+
+      // Show success message
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Login successful!')));
+
+      // Navigate to home page
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => Home()),
+      );
+    } on FirebaseAuthException catch (e) {
+      String message = 'An unknown error occurred.';
+      if (e.code == 'user-not-found') {
+        message = 'No user found for that email.';
+      } else if (e.code == 'wrong-password') {
+        message = 'Wrong password provided for that user.';
+      } else if (e.code == 'invalid-email') {
+        message = 'The email address is not valid.';
+      } else if (e.code == 'invalid-credential') {
+        message = 'Invalid credentials.';
+      }
+      // Show error message
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
+    } catch (e) {
+      // General error handling
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
+    }
+  }
 
   @override
   void dispose() {
@@ -211,12 +254,7 @@ class _LoginState extends State<LogIn> {
                           ),
                         ),
                         child: ElevatedButton(
-                          onPressed: () {
-                            // TODO: Implement Firebase Sign In logic here
-                            // Use _emailController.text and _passwordController.text for credentials
-                            print("Email: ${_emailController.text}");
-                            print("Password: ${_passwordController.text}");
-                          },
+                          onPressed: _signIn, // Call the _signIn function
                           style: ElevatedButton.styleFrom(
                             backgroundColor:
                                 Colors

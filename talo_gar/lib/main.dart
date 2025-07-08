@@ -4,8 +4,11 @@ import 'package:talo_gar/pages/onboarding.dart';
 import 'package:talo_gar/pages/home.dart';
 import 'package:talo_gar/pages/booking.dart';
 import 'package:talo_gar/pages/signup.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
