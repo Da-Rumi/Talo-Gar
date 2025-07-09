@@ -5,6 +5,7 @@ import 'package:talo_gar/pages/home.dart';
 import 'package:talo_gar/pages/booking.dart';
 import 'package:talo_gar/pages/signup.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:talo_gar/pages/welcome_page.dart'; // Import the new WelcomePage
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -39,7 +40,7 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: SignUp(),
+      home: Onboarding(), // Set initial route to WelcomePage
     );
   }
 }

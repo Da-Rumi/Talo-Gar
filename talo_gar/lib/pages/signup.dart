@@ -3,6 +3,9 @@ import 'package:talo_gar/pages/login.dart'; // Import for navigating back to log
 import 'package:firebase_auth/firebase_auth.dart'; // Firebase Authentication
 import 'package:talo_gar/pages/home.dart'; // Import for navigating to home page
 import 'package:talo_gar/services/shared_pref.dart'; // Import for shared preferences
+import 'package:image_picker/image_picker.dart'; // For picking images
+import 'dart:io'; // For File class
+// Removed: import 'package:firebase_storage/firebase_storage.dart'; // For Firebase Storage
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -17,6 +20,57 @@ class _SignUpState extends State<SignUp> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  File? _selectedImage; // Variable to store the selected image file
+
+  // Function to pick an image from gallery or camera
+  Future<void> _pickImage() async {
+    final ImagePicker _picker = ImagePicker();
+    // Show option to choose source
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Choose Image Source'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                GestureDetector(
+                  child: const Text('Gallery'),
+                  onTap: () async {
+                    Navigator.pop(context);
+                    final XFile? image = await _picker.pickImage(
+                      source: ImageSource.gallery,
+                    );
+                    if (image != null) {
+                      setState(() {
+                        _selectedImage = File(image.path);
+                      });
+                    }
+                  },
+                ),
+                const SizedBox(height: 20),
+                GestureDetector(
+                  child: const Text('Camera'),
+                  onTap: () async {
+                    Navigator.pop(context);
+                    final XFile? image = await _picker.pickImage(
+                      source: ImageSource.camera,
+                    );
+                    if (image != null) {
+                      setState(() {
+                        _selectedImage = File(image.path);
+                      });
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   // Async function to handle user sign up
   Future<void> _signUp() async {
     try {
@@ -29,7 +83,7 @@ class _SignUpState extends State<SignUp> {
       // Update user display name
       await userCredential.user?.updateDisplayName(_nameController.text.trim());
 
-      // Save user data to shared preferences
+      // Save user data to shared preferences (without image URL)
       if (userCredential.user != null) {
         await SharedpreferenceHelper().saveUserId(userCredential.user!.uid);
         await SharedpreferenceHelper().saveUserEmail(
@@ -146,6 +200,30 @@ class _SignUpState extends State<SignUp> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // Profile Image Selection
+                      Center(
+                        child: GestureDetector(
+                          onTap: _pickImage, // Call the image picker function
+                          child: CircleAvatar(
+                            radius: 60,
+                            backgroundColor: Colors.grey[200],
+                            backgroundImage:
+                                _selectedImage != null
+                                    ? FileImage(_selectedImage!)
+                                        as ImageProvider<Object>?
+                                    : null, // Display selected image
+                            child:
+                                _selectedImage == null
+                                    ? Icon(
+                                      Icons.add_a_photo,
+                                      size: 40,
+                                      color: Colors.grey[600],
+                                    )
+                                    : null, // Default icon if no image
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 30.0), // Space after image
                       // Name Input Field
                       const Text(
                         "Name",

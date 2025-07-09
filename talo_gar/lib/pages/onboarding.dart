@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:talo_gar/pages/home.dart';
+import 'package:talo_gar/pages/welcome_page.dart'; // Import WelcomePage
 
 class Onboarding extends StatefulWidget {
   const Onboarding({super.key});
@@ -23,7 +24,9 @@ class _OnboardingState extends State<Onboarding> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => Home()),
+                  MaterialPageRoute(
+                    builder: (context) => WelcomePage(),
+                  ), // Changed to WelcomePage
                 );
               },
               style: ElevatedButton.styleFrom(
