@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // For current user ID/email
+import 'package:cloud_firestore/cloud_firestore.dart'; // For Firestore operations
+import 'package:talo_gar/services/shared_pref.dart'; // For user name from shared preferences
+import 'package:talo_gar/pages/home.dart'; // For navigating to home page
 
 class Booking extends StatefulWidget {
   String service;
@@ -35,6 +39,51 @@ class _BookingState extends State<Booking> {
       setState(() {
         _selectedTime = picked;
       });
+  }
+
+  // Async function to handle booking and save to Firestore
+  Future<void> _bookAppointment() async {
+    // Get current user details
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please sign in to book an appointment.')),
+      );
+      return; // Exit if no user is signed in
+    }
+
+    // Get user name from shared preferences
+    String? userName = await SharedpreferenceHelper().getUserName();
+
+    // Prepare booking data
+    Map<String, dynamic> bookingData = {
+      'service': widget.service,
+      'date': _selectedDate.toIso8601String(), // Store date as ISO string
+      'time': _selectedTime.format(context), // Store time as formatted string
+      'userId': user.uid,
+      'userEmail': user.email ?? 'N/A',
+      'userName': userName ?? 'Guest',
+      'timestamp': FieldValue.serverTimestamp(), // Firestore timestamp
+    };
+
+    try {
+      // Add booking data to Firestore
+      await FirebaseFirestore.instance.collection('bookings').add(bookingData);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Appointment booked successfully!')),
+      );
+
+      // Navigate to home page after successful booking
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => Home()),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to book appointment: ${e.toString()}')),
+      );
+    }
   }
 
   @override
@@ -208,32 +257,7 @@ class _BookingState extends State<Booking> {
               ),
               SizedBox(height: 20.0),
               ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (context) => Scaffold(
-                            backgroundColor: const Color.fromARGB(
-                              255,
-                              24,
-                              90,
-                              232,
-                            ),
-                            body: Center(
-                              child: Text(
-                                "Your appointment is booked for ${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year} at ${_selectedTime.format(context)}",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20.0,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                    ),
-                  );
-                },
+                onPressed: _bookAppointment, // Call the booking function
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromARGB(255, 0, 0, 0),
                   foregroundColor: Colors.white,

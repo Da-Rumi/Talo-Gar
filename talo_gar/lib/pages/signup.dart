@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:talo_gar/pages/login.dart'; // Import for navigating back to login
 import 'package:firebase_auth/firebase_auth.dart'; // Firebase Authentication
 import 'package:talo_gar/pages/home.dart'; // Import for navigating to home page
+import 'package:talo_gar/services/shared_pref.dart'; // Import for shared preferences
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -27,6 +28,17 @@ class _SignUpState extends State<SignUp> {
 
       // Update user display name
       await userCredential.user?.updateDisplayName(_nameController.text.trim());
+
+      // Save user data to shared preferences
+      if (userCredential.user != null) {
+        await SharedpreferenceHelper().saveUserId(userCredential.user!.uid);
+        await SharedpreferenceHelper().saveUserEmail(
+          userCredential.user!.email ?? '',
+        ); // Use empty string if email is null
+        await SharedpreferenceHelper().saveUserName(
+          _nameController.text.trim(),
+        );
+      }
 
       // Show success message
       ScaffoldMessenger.of(

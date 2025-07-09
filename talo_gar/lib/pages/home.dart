@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // Firebase Authentication
+import 'package:talo_gar/pages/login.dart'; // Import for navigating to login page
 import 'package:talo_gar/pages/booking.dart';
+import 'package:talo_gar/services/shared_pref.dart'; // Import for shared preferences
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -9,6 +12,44 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  String _currentUserName = "Guest"; // Default name
+
+  // Async function to handle user sign out
+  Future<void> _signOut() async {
+    await FirebaseAuth.instance.signOut();
+    // Navigate to login page
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => LogIn()),
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserName();
+  }
+
+  Future<void> _loadUserName() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    String? nameFromFirebase =
+        user?.displayName; // Get display name from Firebase
+    String? nameFromPrefs =
+        await SharedpreferenceHelper()
+            .getUserName(); // Get name from shared preferences
+
+    setState(() {
+      if (nameFromFirebase != null && nameFromFirebase.isNotEmpty) {
+        _currentUserName = nameFromFirebase; // Prefer Firebase display name
+      } else if (nameFromPrefs != null && nameFromPrefs.isNotEmpty) {
+        _currentUserName =
+            nameFromPrefs; // Use shared preference name if Firebase display name is null
+      } else if (user?.email != null && user!.email!.isNotEmpty) {
+        _currentUserName = user.email!; // Fallback to email if no name is set
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,7 +73,7 @@ class _HomeState extends State<Home> {
                       ),
                     ),
                     Text(
-                      "Mahbub Mahbub",
+                      _currentUserName, // Use the dynamic user name
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 24.0,
@@ -316,6 +357,22 @@ class _HomeState extends State<Home> {
                   ),
                 ),
               ],
+            ),
+            SizedBox(height: 50.0), // Add some space before the button
+            ElevatedButton(
+              onPressed: _signOut, // Call the sign-out function
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red, // Example button color
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+              ),
+              child: const Text(
+                "Sign Out",
+                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+              ),
             ),
           ],
         ),
